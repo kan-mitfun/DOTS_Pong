@@ -10,11 +10,13 @@ public class IncreaseVelocityOverTimeSystem : JobComponentSystem
 	{
 		float deltaTime = Time.DeltaTime;
 
-		Entities.ForEach((ref PhysicsVelocity vel, in SpeedIncreaseOverTimeData data) =>
+        //PhysicsVelocity : The velocity of a rigid body.
+        Entities.ForEach((ref PhysicsVelocity vel, in SpeedIncreaseOverTimeData data) =>
 		{
 			float2 modifier = new float2(data.increasePerSecond * deltaTime);
 
-			float2 newVel = vel.Linear.xy;
+            //Linear = LinearVelocity : The body's world-space linear velocity in units per second.
+            float2 newVel = vel.Linear.xy;
 			newVel += math.lerp(-modifier, modifier, math.sign(newVel));
 			vel.Linear.xy = newVel;
 		}).Run();

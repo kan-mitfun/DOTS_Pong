@@ -23,7 +23,8 @@ public class GameManager : MonoBehaviour
 	Entity ballEntityPrefab;
 	EntityManager manager;
 
-	WaitForSeconds oneSecond;
+    //WaitForSeconds：特定常用秒數放在全域變數，並在Awake初始化，以減少每次new的耗損。
+    WaitForSeconds oneSecond;
 	WaitForSeconds delay;
 
 	private void Awake()
@@ -37,9 +38,12 @@ public class GameManager : MonoBehaviour
 		main = this;
 		playerScores = new int[2];
 
-		manager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        //取得每次將 GameObject 轉換成 Entity 的 World，其下的 EntityManager
+        manager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-		GameObjectConversionSettings settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);
+        //以取得上面同一個 World 的設定。null的參數類型是BlobAssetStore，預期在新版本的DOTS package上可以放入新的物理/動畫系統資源。
+        GameObjectConversionSettings settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);
+        //用以將GameObjectPrefab轉換為EntityPrefab
 		ballEntityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(ballPrefab, settings);
 
 		oneSecond = new WaitForSeconds(1f);
@@ -77,10 +81,12 @@ public class GameManager : MonoBehaviour
 	}
 
 	void SpawnBall()
-	{
-		Entity ball = manager.Instantiate(ballEntityPrefab);
+    {
+        //將球實體化並加入遊戲中(World)
+        Entity ball = manager.Instantiate(ballEntityPrefab);
 
-		Vector3 dir = new Vector3(UnityEngine.Random.Range(0, 2) == 0 ? -1 : 1, UnityEngine.Random.Range(-.5f, .5f), 0f).normalized;
+        //將球加入物理速度
+        Vector3 dir = new Vector3(UnityEngine.Random.Range(0, 2) == 0 ? -1 : 1, UnityEngine.Random.Range(-.5f, .5f), 0f).normalized;
 		Vector3 speed = dir * ballSpeed;
 
 		PhysicsVelocity velocity = new PhysicsVelocity()
