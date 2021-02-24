@@ -11,7 +11,7 @@ public class IncreaseVelocityOverTimeSystem : JobComponentSystem
 		float deltaTime = Time.DeltaTime;
 
         //PhysicsVelocity : The velocity of a rigid body.
-        Entities.ForEach((ref PhysicsVelocity vel, in SpeedIncreaseOverTimeData data) =>
+        JobHandle myJob = Entities.ForEach((ref PhysicsVelocity vel, in SpeedIncreaseOverTimeData data) =>
 		{
 			float2 modifier = new float2(data.increasePerSecond * deltaTime);
 
@@ -19,8 +19,8 @@ public class IncreaseVelocityOverTimeSystem : JobComponentSystem
             float2 newVel = vel.Linear.xy;
 			newVel += math.lerp(-modifier, modifier, math.sign(newVel));
 			vel.Linear.xy = newVel;
-		}).Run();
+		}).Schedule(inputDeps);
 
-		return default;
+		return myJob;
 	}
 }

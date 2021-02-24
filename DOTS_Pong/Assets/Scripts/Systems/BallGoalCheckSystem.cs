@@ -53,33 +53,33 @@ public class BallGoalCheckSystem : JobComponentSystem
 
 
     #region 第二寫法
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        //EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        float bound = 10;
 
-        Entities
+        JobHandle myJob = Entities
             .WithAll<BallTag>()
-            .WithoutBurst()
+            //.WithoutBurst()
             .ForEach((Entity entity, in Translation trans) =>
             {
                 float3 pos = trans.Value;
-                float bound = GameManager.main.xBound;
 
                 if (pos.x >= bound)
                 {
-                    GameManager.main.PlayerScored(0);
-                    ecb.DestroyEntity(entity);
+                    //GameManager.main.PlayerScored(0);
+                    //ecb.DestroyEntity(entity);
                 }
                 else if (pos.x <= -bound)
                 {
-                    GameManager.main.PlayerScored(1);
-                    ecb.DestroyEntity(entity);
+                    //GameManager.main.PlayerScored(1);
+                    //ecb.DestroyEntity(entity);
                 }
-            }).Run();
+            }).Schedule(inputDeps);
 
-        ecb.Playback(EntityManager);
-        ecb.Dispose();
+        //ecb.Playback(EntityManager);
+        //ecb.Dispose();
         #endregion
 
 
-        return default;
+        return myJob;
 	}
 }

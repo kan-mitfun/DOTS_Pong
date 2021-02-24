@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
 	public Text mainText;
 	public Text[] playerTexts;
 
+    [Range(0, 5)]
+    public int ballAmountOnStart = 0;
+
 	Entity ballEntityPrefab;
 	EntityManager manager;
 
@@ -49,8 +52,8 @@ public class GameManager : MonoBehaviour
 		oneSecond = new WaitForSeconds(1f);
 		delay = new WaitForSeconds(respawnDelay);
 
-		StartCoroutine(CountdownAndSpawnBall());
-	}
+        StartCoroutine(CountdownAndSpawnBall(ballAmountOnStart * short.MaxValue));
+    }
 
 	public void PlayerScored(int playerID)
 	{
@@ -61,7 +64,7 @@ public class GameManager : MonoBehaviour
 		StartCoroutine(CountdownAndSpawnBall());
 	}
 
-	IEnumerator CountdownAndSpawnBall()
+	IEnumerator CountdownAndSpawnBall(int ballAmount=1)
 	{
 		mainText.text = "Get Ready";
 		yield return delay;
@@ -77,7 +80,16 @@ public class GameManager : MonoBehaviour
 
 		mainText.text = "";
 
-		SpawnBall();
+        ballAmount = Mathf.Max(1, ballAmount);
+
+        while (ballAmount-- > 0)
+        {
+            if (ballAmount % 1000 == 0)
+            {
+                yield return null;
+            }
+            SpawnBall();
+        }
 	}
 
 	void SpawnBall()
